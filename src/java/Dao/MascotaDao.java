@@ -38,7 +38,8 @@ public class MascotaDao implements IMascota {
 
 
     @Override
-    public ArrayList<Mascota> listarMascotas(Session sesion) {
+    public ArrayList<Mascota> listarMascotas() {
+        Session sesion = HibernateUtil.getSessionFactory().openSession();
         ArrayList<Mascota> milista = new ArrayList<>();
 
         //crear la consulta hacia la base de datos
@@ -50,12 +51,21 @@ public class MascotaDao implements IMascota {
     }
 
     @Override
-    public void ActualizarMascota(Mascota mascota) {
+    public boolean ActualizarMascota(Mascota mascota) {
+        boolean respuesta = true;
         Session sesion = HibernateUtil.getSessionFactory().openSession();
         Transaction transaccion = sesion.beginTransaction();
-        sesion.update(mascota);
-        transaccion.commit();
+        //registrar en la base de datos de la 
+        try {
+            sesion.update(mascota);
+            transaccion.commit();
+
+        } catch (Exception e) {
+            System.out.println("error"+e);
+        }
+ 
         sesion.close();
+        return respuesta;
     }
 
     @Override
@@ -83,4 +93,21 @@ public class MascotaDao implements IMascota {
         Integer cont=FilasTab.intValue();
         return cont;
     }
-}
+
+    @Override
+    public boolean eliminar(Mascota mascota) {
+        Session sesion = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaccion = sesion.beginTransaction();
+        boolean respuesta = true;
+        try{
+        sesion.delete(  mascota);
+        transaccion.commit();
+        }catch(Exception e){
+            respuesta = false;
+        }
+        sesion.close();
+        return respuesta;
+    }
+    
+    }
+

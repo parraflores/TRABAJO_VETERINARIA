@@ -9,9 +9,13 @@ import Dao.MascotaDao;
 import entidades.Mascota;
 import java.util.ArrayList;
 import java.util.jar.Attributes;
+import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 //import javax.enteratprise.context.RequestScoped;
 import javax.faces.bean.ViewScoped;
+import javax.faces.context.FacesContext;
+import org.hibernate.Session;
+import utilitarios.HibernateUtil;
 
 /**
  *
@@ -27,9 +31,8 @@ public class MascotaBean {
      * Creates a new instance of MascotaBean
      */
     public MascotaBean() {
-        System.out.println("Hola");
-        this.mascota=new Mascota();
         
+        this.mascota=new Mascota();
     }
 
     public Mascota getMascota() {
@@ -41,32 +44,68 @@ public class MascotaBean {
     }
     
   
-    public void guardarMascota() {
+    public String guardarMascota() {
 
-        try {
+          try {
+
             MascotaDao mascotadao = new MascotaDao();
-            mascotadao.guardarMascota(mascota);
-
+           boolean respuesta= mascotadao.guardarMascota(mascota);
+           if(respuesta){
+               FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Correcto", "Registro Exitoso"));
+           }else{
+               FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Error", "No se Pudo Registar"));
+               
+           }
         } catch (Exception e) {
             System.out.println("error" + e);
-
         }
+        return "/index";
     }
 
-    public void actualizarMascota(Mascota mascota) {
-        MascotaDao mascotadao = new MascotaDao();
-        mascotadao.ActualizarMascota(mascota);
+    public String actualizarMascota() {
+       try {
+
+            MascotaDao mascotadao = new MascotaDao();
+           boolean respuesta= mascotadao.ActualizarMascota(mascota);
+           if(respuesta){
+               FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Correcto", "Registro Exitoso"));
+           }else{
+               FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Error", "No se Pudo Registar"));
+               
+           }
+        } catch (Exception e) {
+            System.out.println("error" + e);
+        }
+        return "/index";
 
     }
 
-    public ArrayList<Mascota> ListarMascota() {
-        MascotaDao mascotadao = new MascotaDao();
-
-        ArrayList<Mascota> lista = new ArrayList<>();
-        //lista = mascotadao.listarMascotas(session);
-        return lista;
+   public ArrayList<Mascota> ListarMascotas() {
+       ArrayList<Mascota> milista = new ArrayList<>();
+       MascotaDao dao = new MascotaDao();
+       milista= dao.listarMascotas();
+       return milista;
     }
-
+    public String limpiar(){
+    return "/index.xhtml";
 }
+public String eliminarMascotas(Mascota mascotas){
+ try {
+
+            MascotaDao mascotadao = new MascotaDao();
+           boolean respuesta= mascotadao.eliminar(mascotas);
+           if(respuesta){
+               FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Correcto", "Registro Exitoso"));
+           }else{
+               FacesContext.getCurrentInstance().addMessage(null, new FacesMessage("Error", "No se Pudo Registar"));
+               
+           }
+        } catch (Exception e) {
+            System.out.println("error" + e);
+        }
+        return "/index";
+}
+}
+
 
     
